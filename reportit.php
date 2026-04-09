@@ -729,7 +729,7 @@ function form_save()
 						$value = trim($value);
 
 						if (!preg_match('/(^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\\.[a-zA-Z]{2,3}$)/', $value)) {
-							cacti_log('WARNING: Unable to add email address "' . $value . '" to RIReport[' . $id . ']', false, 'REPORTIT');
+							cacti_log('WARNING: Unable to add email address "' . $value . '" to RIReport[' . $id . ']', false, 'REPORTIT', POLLER_VERBOSITY_LOW);
 							session_custom_error_message('email_address', 'Invalid email address');
 						} else {
 							if (array_key_exists($key, $recipients) && $recipients[$key][1] != '[') {

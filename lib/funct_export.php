@@ -377,7 +377,7 @@ function export_to_YAML(&$data)
 	if (function_exists('yaml_emit')) {
 		return yaml_emit(json_decode($report_data, true));
 	} else {
-		cacti_log('WARNING: You attempted to use YAML as the export format, but PHP is not built using the yaml functions', false, 'REPORTIT');
+		cacti_log('WARNING: You attempted to use YAML as the export format, but PHP is not built using the yaml functions', false, 'REPORTIT', POLLER_VERBOSITY_LOW);
 
 		return false;
 	}

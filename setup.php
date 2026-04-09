@@ -671,7 +671,7 @@ function reportit_poller_bottom()
 				}
 			} else {
 				if ($logging_level != 'POLLER_VERBOSITY_LOW') {
-					cacti_log('WARNING: Unable to clean up report cache', false, 'REPORTIT');
+					cacti_log('WARNING: Unable to clean up report cache', false, 'REPORTIT', POLLER_VERBOSITY_LOW);
 				}
 			}
 		}

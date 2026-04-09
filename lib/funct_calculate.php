@@ -474,7 +474,7 @@ function calculate_handler()
 {
 	global $calculate_last_formula;
 	if (!empty($calculate_last_formula)) {
-		cacti_log('ERROR: Bad Formula: ' . $calculate_last_formula, false, 'REPORTIT');
+		cacti_log('ERROR: Bad Formula: ' . $calculate_last_formula, false, 'REPORTIT', POLLER_VERBOSITY_NONE);
 	}
 }
 

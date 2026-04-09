@@ -573,7 +573,7 @@ function runtime($report_id, $queue_id, $start_time = 0)
 			$rrd_ds_namv = $rrd_data[$index]['ds_namv'];
 			$rrd_nan = 0;
 		} else {
-			cacti_log("WARNING: Problems with DS[$local_data_id]", false, 'REPORTIT');
+			cacti_log("WARNING: Problems with DS[$local_data_id]", false, 'REPORTIT', POLLER_VERBOSITY_LOW);
 
 			continue;
 		}
