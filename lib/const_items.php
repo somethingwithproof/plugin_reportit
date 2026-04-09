@@ -1,4 +1,5 @@
 <?php
+
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2026 The Cacti Group                                 |
@@ -24,5 +25,4 @@
 
 //----- CONSTANTS FOR: items.php -----
 
-$link_array = array('name_cache', '');
-
+$link_array = ['name_cache', ''];

@@ -1,4 +1,5 @@
 <?php
+
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2026 The Cacti Group                                 |
@@ -22,8 +23,9 @@
  +-------------------------------------------------------------------------+
 */
 
-function reportit_system_upgrade($old_version) {
-	require_once(CACTI_PATH_BASE . '/lib/api_scheduler.php');
+function reportit_system_upgrade($old_version)
+{
+	require_once CACTI_PATH_BASE . '/lib/api_scheduler.php';
 
 	$default_engine = db_fetch_row("SHOW GLOBAL VARIABLES LIKE 'default_storage_engine'");
 
@@ -180,10 +182,10 @@ function reportit_system_upgrade($old_version) {
 
 	if (cacti_version_compare($old_version, '1.0.2', '<')) {
 		/* migrate existing result tables */
-		$result_tables = array(); //db_fetch_assoc("SHOW TABLES FROM `$database_default` LIKE 'reportit_result%'");
+		$result_tables = []; //db_fetch_assoc("SHOW TABLES FROM `$database_default` LIKE 'reportit_result%'");
 
-		foreach($result_tables as $index => $arr) {
-			foreach($arr as $tbl) {
+		foreach ($result_tables as $index => $arr) {
+			foreach ($arr as $tbl) {
 				db_execute("RENAME TABLE `$tbl` TO `plugin_$tbl`");
 			}
 		}
@@ -206,18 +208,18 @@ function reportit_system_upgrade($old_version) {
 			start_date = IF(CAST(start_date AS CHAR) = '0000-00-00', '1970-01-01', start_date),
 			end_date = IF(CAST(end_date AS CHAR)= '0000-00-00', '1970-01-01', end_date)");
 
-		db_execute("ALTER TABLE `plugin_reportit_reports`
+		db_execute('ALTER TABLE `plugin_reportit_reports`
 			CHANGE COLUMN `last_run` `last_run` DATETIME NULL default NULL,
 			CHANGE COLUMN `start_date` `start_date` DATE NULL default NULL,
-			CHANGE COLUMN `end_date` `end_date` DATE NULL default NULL");
+			CHANGE COLUMN `end_date` `end_date` DATE NULL default NULL');
 
 		db_execute("UPDATE `plugin_reportit_reports` SET
 			last_run = IF(CAST(last_run as CHAR) = '1970-01-01 00:00:00', NULL, last_run),
 			start_date = IF(CAST(start_date AS CHAR) = '1970-01-01', NULL, start_date),
 			end_date = IF(CAST(end_date AS CHAR)= '1970-01-01', NULL, end_date)");
 
-		db_execute("ALTER TABLE `plugin_reportit_reports`
-			ADD COLUMN `last_state` TIMESTAMP NOT NULL default CURRENT_TIMESTAMP AFTER `last_run`");
+		db_execute('ALTER TABLE `plugin_reportit_reports`
+			ADD COLUMN `last_state` TIMESTAMP NOT NULL default CURRENT_TIMESTAMP AFTER `last_run`');
 
 		// Fix partial renaming that occurred in 1.0.x
 		db_execute("UPDATE `plugin_reportit_templates`
@@ -355,36 +357,36 @@ function reportit_system_upgrade($old_version) {
 		/* migrate to the cacti scheduler syntax */
 		$alters = '';
 
-		$columns = array(
-			'sched_type'   => "ADD COLUMN `sched_type` int(10) unsigned NOT NULL default '0' AFTER name",
-			'run_limit'    => "ADD COLUMN `run_limit` int(10) unsigned default '0' AFTER sched_type",
-			'start_at'     => "ADD COLUMN `start_at` varchar(20) default NULL AFTER run_limit",
-			'next_start'   => "ADD COLUMN `next_start` timestamp NOT NULL default '0000-00-00 00:00:00' AFTER start_at",
-			'recur_every'  => "ADD COLUMN `recur_every` int(10) unsigned default '1' AFTER next_start",
-			'day_of_week'  => "ADD COLUMN `day_of_week` varchar(45) default NULL AFTER recur_every",
-			'month'        => "ADD COLUMN `month` varchar(45) default NULL AFTER day_of_week",
-			'day_of_month' => "ADD COLUMN `day_of_month` varchar(45) default NULL AFTER month",
-			'monthly_week' => "ADD COLUMN `monthly_week` varchar(45) default NULL AFTER day_of_month",
-			'monthly_day'  => "ADD COLUMN `monthly_day` varchar(45) default NULL AFTER monthly_week",
+		$columns = [
+			'sched_type' => "ADD COLUMN `sched_type` int(10) unsigned NOT NULL default '0' AFTER name",
+			'run_limit' => "ADD COLUMN `run_limit` int(10) unsigned default '0' AFTER sched_type",
+			'start_at' => 'ADD COLUMN `start_at` varchar(20) default NULL AFTER run_limit',
+			'next_start' => "ADD COLUMN `next_start` timestamp NOT NULL default '0000-00-00 00:00:00' AFTER start_at",
+			'recur_every' => "ADD COLUMN `recur_every` int(10) unsigned default '1' AFTER next_start",
+			'day_of_week' => 'ADD COLUMN `day_of_week` varchar(45) default NULL AFTER recur_every',
+			'month' => 'ADD COLUMN `month` varchar(45) default NULL AFTER day_of_week',
+			'day_of_month' => 'ADD COLUMN `day_of_month` varchar(45) default NULL AFTER month',
+			'monthly_week' => 'ADD COLUMN `monthly_week` varchar(45) default NULL AFTER day_of_month',
+			'monthly_day' => 'ADD COLUMN `monthly_day` varchar(45) default NULL AFTER monthly_week',
 			'last_runtime' => "ADD COLUMN `last_runtime` double NOT NULL default '0' AFTER monthly_day",
 			'last_started' => "ADD COLUMN `last_started` timestamp NOT NULL default '0000-00-00 00:00:00' AFTER last_runtime",
-			'last_status'  => "ADD COLUMN `last_status` varchar(128) NOT NULL default '' AFTER last_started",
-			'email'        => "ADD COLUMN `email` text default NULL AFTER email_format",
-			'bcc'          => "ADD COLUMN `bcc` text default NULL AFTER email",
-		);
+			'last_status' => "ADD COLUMN `last_status` varchar(128) NOT NULL default '' AFTER last_started",
+			'email' => 'ADD COLUMN `email` text default NULL AFTER email_format',
+			'bcc' => 'ADD COLUMN `bcc` text default NULL AFTER email',
+		];
 
-		foreach($columns as $column => $alter) {
+		foreach ($columns as $column => $alter) {
 			if (!db_column_exists('plugin_reportit_reports', $column)) {
 				$alters .= ($alters != '' ? ', ':'') . $alter;
 			}
 		}
 
-		$indexes = array(
-			'last_started' => "ADD INDEX `last_started` (`last_started`)",
-			'next_start'   => "ADD INDEX `next_start` (`next_start`)"
-		);
+		$indexes = [
+			'last_started' => 'ADD INDEX `last_started` (`last_started`)',
+			'next_start' => 'ADD INDEX `next_start` (`next_start`)',
+		];
 
-		foreach($indexes as $index => $alter) {
+		foreach ($indexes as $index => $alter) {
 			if (!db_index_exists('plugin_reportit_reports', $index)) {
 				$alters .= ($alters != '' ? ', ':'') . $alter;
 			}
@@ -415,7 +417,7 @@ function reportit_system_upgrade($old_version) {
 
 			if (cacti_sizeof($reports)) {
 				// Get the enabled status and store
-				foreach($reports as $r) {
+				foreach ($reports as $r) {
 					$enabled[$r['id']] = $r['enabled'];
 				}
 
@@ -427,29 +429,31 @@ function reportit_system_upgrade($old_version) {
 					ADD COLUMN state tinyint(1) unsigned NOT NULL default "0" AFTER enabled,
 					ADD COLUMN last_state timestamp default NULL AFTER state');
 
-				foreach($reports as $r) {
-					switch($r['frequency']) {
+				foreach ($reports as $r) {
+					switch ($r['frequency']) {
 						case 'daily':
-							db_execute_prepared('UPDATE plugin_reportit_reports
+							db_execute_prepared(
+								'UPDATE plugin_reportit_reports
 								SET sched_type = ?,
 								enabled = ?,
 								recur_every = ?,
 								next_start = ?,
 								last_started = ?
 								WHERE id = ?',
-								array(
+								[
 									2,
 									$enabled[$r['id']],
 									1,
 									date('Y-m-d 00:00:00', time() + 86400),
 									$r['last_run'],
-									$r['id']
-								)
+									$r['id'],
+								]
 							);
 
 							break;
 						case 'weekly':
-							db_execute_prepared('UPDATE plugin_reportit_reports
+							db_execute_prepared(
+								'UPDATE plugin_reportit_reports
 								SET sched_type = ?,
 								enabled = ?,
 								recur_every = ?,
@@ -457,20 +461,21 @@ function reportit_system_upgrade($old_version) {
 								next_start = ?,
 								last_started = ?
 								WHERE id = ?',
-								array(
+								[
 									3,
 									$enabled[$r['id']],
 									1,
 									1,
 									date('Y-m-d 00:00:00', time() + 86400),
 									$r['last_run'],
-									$r['id']
-								)
+									$r['id'],
+								]
 							);
 
 							break;
 						case 'monthly':
-							db_execute_prepared('UPDATE plugin_reportit_reports
+							db_execute_prepared(
+								'UPDATE plugin_reportit_reports
 								SET sched_type = ?,
 								enabled = ?,
 								month = ?,
@@ -478,20 +483,21 @@ function reportit_system_upgrade($old_version) {
 								next_start = ?,
 								last_started = ?
 								WHERE id = ?',
-								array(
+								[
 									4,
 									$enabled[$r['id']],
 									'1,2,3,4,5,6,7,8,9,10,11,12',
 									1,
 									date('Y-m-d 00:00:00', time() + 86400),
 									$r['last_run'],
-									$r['id']
-								)
+									$r['id'],
+								]
 							);
 
 							break;
 						case 'quarterly':
-							db_execute_prepared('UPDATE plugin_reportit_reports
+							db_execute_prepared(
+								'UPDATE plugin_reportit_reports
 								SET sched_type = ?,
 								enabled = ?,
 								month = ?,
@@ -499,35 +505,36 @@ function reportit_system_upgrade($old_version) {
 								next_start = ?,
 								last_started = ?
 								WHERE id = ?',
-								array(
+								[
 									4,
 									$enabled[$r['id']],
 									'1,4,7,10',
 									1,
 									date('Y-m-d 00:00:00', time() + 86400),
 									$r['last_run'],
-									$r['id']
-								)
+									$r['id'],
+								]
 							);
 
 							break;
 						case 'yearly':  // Yearly
 							cacti_log(sprintf('WARNING: Yearly Reports are no longer supported.  Disabling Report \'%s\'', $r['name']), false, 'INSTALL');
 
-							db_execute_prepared('UPDATE plugin_reportit_reports
+							db_execute_prepared(
+								'UPDATE plugin_reportit_reports
 								SET sched_type = 1,
 								enabled = "",
 								next_start = ?,
 								last_started = ?
 								WHERE id = ?',
-								array(
+								[
 									$r['mailtime'],
 									$r['lastsent'],
-									$r['id']
-									)
-								);
+									$r['id'],
+									]
+							);
 
-								break;
+							break;
 					}
 				}
 			} else {
@@ -540,18 +547,18 @@ function reportit_system_upgrade($old_version) {
 					ADD COLUMN last_state timestamp default NULL AFTER state');
 			}
 
-			$drop_columns = array(
+			$drop_columns = [
 				'frequency',
 				'last_run',
 				'runtime',
 				'autoexport',
 				'autoexport_max_records',
 				'autoexport_no_formatting',
-				'autoarchive'
-			);
+				'autoarchive',
+			];
 
 			$alters = '';
-			foreach($drop_columns as $c) {
+			foreach ($drop_columns as $c) {
 				if (db_column_exists('plugin_reportit_reports', $c)) {
 					$alters .= ($alters != '' ? ', ':'') . "DROP COLUMN `$c`";
 				}
@@ -565,4 +572,3 @@ function reportit_system_upgrade($old_version) {
 		reportit_recreate_cache_tables();
 	}
 }
-

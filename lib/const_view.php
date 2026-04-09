@@ -1,4 +1,5 @@
 <?php
+
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2026 The Cacti Group                                 |
@@ -22,83 +23,86 @@
  +-------------------------------------------------------------------------+
 */
 
-if (!defined('REPORTIT_TMP_FD')) define('REPORTIT_TMP_FD', CACTI_BASE_PATH . '/plugins/reportit/tmp/');
-if (!defined('REPORTIT_ARC_FD')) define('REPORTIT_ARC_FD', CACTI_BASE_PATH . '/plugins/reportit/archive/');
+if (!defined('REPORTIT_TMP_FD')) {
+	define('REPORTIT_TMP_FD', CACTI_BASE_PATH . '/plugins/reportit/tmp/');
+}
+if (!defined('REPORTIT_ARC_FD')) {
+	define('REPORTIT_ARC_FD', CACTI_BASE_PATH . '/plugins/reportit/archive/');
+}
 
-$search = array(
+$search = [
 	'|t1|',
 	'|t2|',
 	'|tmz|',
 	'|d1|',
-	'|d2|'
-);
+	'|d2|',
+];
 
-$export_formats	= array(
+$export_formats = [
 	'CSV' => __('Text CSV (.csv)', 'reportit'),
 	'XML' => __('Raw XML (.xml)', 'reportit'),
-	'SML' => __('MS Excel 2003 XML (.xml)', 'reportit')
-);
+	'SML' => __('MS Excel 2003 XML (.xml)', 'reportit'),
+];
 
-$threshold 	= 0.5;
+$threshold = 0.5;
 
-$decimal = array(
-	'Y' => pow(1000,8),
-	'Z' => pow(1000,7),
-	'E' => pow(1000,6),
-	'P' => pow(1000,5),
-	'T' => pow(1000,4),
-	'G' => pow(1000,3),
-	'M' => pow(1000,2),
-	'K' => 1000
-);
+$decimal = [
+	'Y' => pow(1000, 8),
+	'Z' => pow(1000, 7),
+	'E' => pow(1000, 6),
+	'P' => pow(1000, 5),
+	'T' => pow(1000, 4),
+	'G' => pow(1000, 3),
+	'M' => pow(1000, 2),
+	'K' => 1000,
+];
 
-$binary = array(
-	'Y' => pow(1024,8),
-	'Z' => pow(1024,7),
-	'E' => pow(1024,6),
-	'P' => pow(1024,5),
-	'T' => pow(1024,4),
-	'G' => pow(1024,3),
-	'M' => pow(1024,2),
-	'K' => 1024
-);
+$binary = [
+	'Y' => pow(1024, 8),
+	'Z' => pow(1024, 7),
+	'E' => pow(1024, 6),
+	'P' => pow(1024, 5),
+	'T' => pow(1024, 4),
+	'G' => pow(1024, 3),
+	'M' => pow(1024, 2),
+	'K' => 1024,
+];
 
 $IEC = read_config_option('reportit_use_IEC');
 
-$graphs = array(
+$graphs = [
 	'-10' => __('Bar chart: vertical', 'reportit'),
-	'10'  => __('Bar chart: horizontal', 'reportit'),
-	'20'  => __('Line chart', 'reportit'),
-	'21'  => __('Area chart', 'reportit'),
-	'30'  => __('Pie chart: 3D', 'reportit'),
-	'40'  => __('Spider', 'reportit')
-);
+	'10' => __('Bar chart: horizontal', 'reportit'),
+	'20' => __('Line chart', 'reportit'),
+	'21' => __('Area chart', 'reportit'),
+	'30' => __('Pie chart: 3D', 'reportit'),
+	'40' => __('Spider', 'reportit'),
+];
 
-$limit = array(
+$limit = [
 	'-4' => __('%s Hi', 20, 'reportit'),
 	'-3' => __('%s Hi', 15, 'reportit'),
 	'-2' => __('%s Hi', 10, 'reportit'),
 	'-1' => __('%s Hi', 05, 'reportit'),
-	'1'  => __('%s Lo', 05, 'reportit'),
-	'2'  => __('%s Lo', 10, 'reportit'),
-	'3'  => __('%s Lo', 15, 'reportit'),
-	'4'  => __('%s Lo', 20, 'reportit')
-);
+	'1' => __('%s Lo', 05, 'reportit'),
+	'2' => __('%s Lo', 10, 'reportit'),
+	'3' => __('%s Lo', 15, 'reportit'),
+	'4' => __('%s Lo', 20, 'reportit'),
+];
 
-$t_limit = array(
-	'0'  => __('Any', 'reportit'),
+$t_limit = [
+	'0' => __('Any', 'reportit'),
 	'-4' => '20',
 	'-3' => '15',
 	'-2' => '10',
-	'-1' => '05'
-);
+	'-1' => '05',
+];
 
-$add_info = array(
-	'-2' => array(__('None', 'reportit'),''),
-	'-1' => array(__('All', 'reportit'), ''),
-	'1'  => array(__('Sum', 'reportit'), 'array_sum'),
-	'2'  => array(__('Minimum', 'reportit'), 'min'),
-	'3'  => array(__('Maximum', 'reportit'), 'max'),
-	'4'  => array(__('Average', 'reportit'), 'average')
-);
-
+$add_info = [
+	'-2' => [__('None', 'reportit'),''],
+	'-1' => [__('All', 'reportit'), ''],
+	'1' => [__('Sum', 'reportit'), 'array_sum'],
+	'2' => [__('Minimum', 'reportit'), 'min'],
+	'3' => [__('Maximum', 'reportit'), 'max'],
+	'4' => [__('Average', 'reportit'), 'average'],
+];
